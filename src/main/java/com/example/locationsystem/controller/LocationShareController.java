@@ -1,5 +1,6 @@
 package com.example.locationsystem.controller;
 
+import com.example.locationsystem.dto.LocationShareRequest;
 import com.example.locationsystem.dto.UserLocationAccessDTO;
 import com.example.locationsystem.mapper.UserMapper;
 import com.example.locationsystem.model.AccessLevel;
@@ -23,13 +24,12 @@ public class LocationShareController {
     @PostMapping("/{locationId}/share")
     public ResponseEntity<UserLocationAccessDTO> shareLocation(
             @PathVariable Long locationId,
-            @RequestParam Long userId,
-            @RequestParam AccessLevel accessLevel) {
+            @RequestBody LocationShareRequest request) {
         return locationService.getLocationById(locationId)
-                .flatMap(locationDto -> userService.getUserById(userId)
+                .flatMap(locationDto -> userService.getUserById(request.getUserId())
                         .map(userDto -> {
                             UserLocationAccessDTO access = locationService.shareLocationWithUser(locationDto,
-                                    UserMapper.INSTANCE.toEntity(userDto), accessLevel);
+                                    UserMapper.INSTANCE.toEntity(userDto), request.getAccessLevel());
                             return new ResponseEntity<>(access, HttpStatus.OK);
                         }))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
