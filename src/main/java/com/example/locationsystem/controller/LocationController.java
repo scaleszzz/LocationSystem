@@ -45,4 +45,24 @@ public class LocationController {
                         UserMapper.INSTANCE.toEntity(userDto)), HttpStatus.OK))
                 .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
+    @PutMapping("/{id}")
+    public ResponseEntity<LocationDTO> updateLocation(@PathVariable Long id, @RequestBody LocationDTO locationDto) {
+        return locationService.getLocationById(id)
+                .map(existingLocation -> {
+                    locationDto.setId(id);
+                    LocationDTO updatedLocation = locationService.createLocation(locationDto);
+                    return new ResponseEntity<>(updatedLocation, HttpStatus.OK);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteLocation(@PathVariable Long id) {
+        return locationService.getLocationById(id)
+                .map(existingLocation -> {
+                    locationService.deleteLocationById(id);
+                    return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
+                })
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
 }
