@@ -1,5 +1,9 @@
 package com.example.locationsystem.service;
 
+import com.example.locationsystem.dto.LocationDTO;
+import com.example.locationsystem.dto.UserLocationAccessDTO;
+import com.example.locationsystem.mapper.LocationMapper;
+import com.example.locationsystem.mapper.UserLocationAccessMapper;
 import com.example.locationsystem.model.AccessLevel;
 import com.example.locationsystem.model.Location;
 import com.example.locationsystem.model.User;
@@ -19,31 +23,37 @@ public class LocationService {
     private final LocationRepository locationRepository;
     private final UserLocationAccessRepository userLocationAccessRepository;
 
-    public Location createLocation(Location location) {
-        return locationRepository.save(location);
+    public LocationDTO createLocation(LocationDTO locationDto) {
+        Location location = LocationMapper.INSTANCE.toEntity(locationDto);
+        return LocationMapper.INSTANCE.toDto(locationRepository.save(location));
     }
 
-    public List<Location> getAllLocations() {
-        return locationRepository.findAll();
+    public List<LocationDTO> getAllLocations() {
+        List<Location> locations = locationRepository.findAll();
+        return LocationMapper.INSTANCE.toDtoList(locations);
     }
 
-    public Optional<Location> getLocationById(long id) {
-        return locationRepository.findById(id);
+    public Optional<LocationDTO> getLocationById(long id) {
+        return locationRepository.findById(id)
+                .map(LocationMapper.INSTANCE::toDto);
     }
 
-    public List<Location> getLocationsByUserId(User owner) {
-        return locationRepository.findByOwner(owner);
+    public List<LocationDTO> getLocationsByUserId(User owner) {
+        List<Location> locations = locationRepository.findByOwner(owner);
+        return LocationMapper.INSTANCE.toDtoList(locations);
     }
 
-    public UserLocationAccess shareLocationWithUser(Location location, User user, AccessLevel accessLevel) {
+    public UserLocationAccessDTO shareLocationWithUser(LocationDTO locationDto, User user, AccessLevel accessLevel) {
+        Location location = LocationMapper.INSTANCE.toEntity(locationDto);
         UserLocationAccess userLocationAccess = new UserLocationAccess();
         userLocationAccess.setLocation(location);
         userLocationAccess.setUser(user);
         userLocationAccess.setAccessLevel(accessLevel);
-        return userLocationAccessRepository.save(userLocationAccess);
+        return UserLocationAccessMapper.INSTANCE.toDto(userLocationAccessRepository.save(userLocationAccess));
     }
 
-    public List<UserLocationAccess> getUserAccessesByLocation(Long locationId) {
-        return userLocationAccessRepository.findByLocationId(locationId);
+    public List<UserLocationAccessDTO> getUserAccessesByLocation(Long locationId) {
+        List<UserLocationAccess> accesses = userLocationAccessRepository.findByLocationId(locationId);
+        return UserLocationAccessMapper.INSTANCE.toDtoList(accesses);
     }
 }

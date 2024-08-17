@@ -1,9 +1,10 @@
 package com.example.locationsystem.service;
 
+import com.example.locationsystem.dto.UserDTO;
+import com.example.locationsystem.mapper.UserMapper;
 import com.example.locationsystem.model.User;
 import com.example.locationsystem.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,16 +16,19 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public User createUser(User user) {
-        return userRepository.save(user);
+    public UserDTO createUser(UserDTO userDto) {
+        User user = UserMapper.INSTANCE.toEntity(userDto);
+        return UserMapper.INSTANCE.toDto(userRepository.save(user));
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getAllUsers() {
+        List<User> users = userRepository.findAll();
+        return UserMapper.INSTANCE.toDtoList(users);
     }
 
-    public Optional<User> getUserById(Long id) {
-        return userRepository.findById(id);
+    public Optional<UserDTO> getUserById(Long id) {
+        return userRepository.findById(id)
+                .map(UserMapper.INSTANCE::toDto);
     }
 
 }
