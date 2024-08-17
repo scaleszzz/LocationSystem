@@ -56,4 +56,17 @@ public class LocationService {
         List<UserLocationAccess> accesses = userLocationAccessRepository.findByLocationId(locationId);
         return UserLocationAccessMapper.INSTANCE.toDtoList(accesses);
     }
+
+    public void deleteLocationById(Long id){
+        locationRepository.deleteById(id);
+    }
+
+    public boolean removeUserAccessFromLocation(Long locationId, Long userId) {
+        List<UserLocationAccess> accesses = userLocationAccessRepository.findByLocationId(locationId);
+        if(!accesses.isEmpty()){
+            userLocationAccessRepository.deleteAll(accesses);
+            return true;
+        }
+        return false;
+    }
 }

@@ -38,4 +38,8 @@ public class UserService {
                 .map(UserMapper.INSTANCE::toDto);
     }
 
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
+    }
+
 }
