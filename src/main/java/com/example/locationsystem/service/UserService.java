@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     public User createUser(User user) {
         return userRepository.save(user);
