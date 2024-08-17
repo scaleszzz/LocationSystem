@@ -6,9 +6,9 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "t_users")
+@Table(name = "t_locations")
 @Data
-public class User {
+public class Location {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,9 +18,12 @@ public class User {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "email",unique = true,nullable = false)
-    private String email;
+    @Column(name = "address")
+    private String address;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private Set<UserLocationAccess> locationAccesses;
+    @ManyToOne
+    private User owner;
+
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private Set<UserLocationAccess> userAccesses;
 }
