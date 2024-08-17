@@ -16,9 +16,16 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserDTO createUser(UserDTO userDto) {
-        User user = UserMapper.INSTANCE.toEntity(userDto);
-        return UserMapper.INSTANCE.toDto(userRepository.save(user));
+    public UserDTO createUser(UserDTO userDTO) {
+        Optional<User> existingUser = userRepository.findByEmail(userDTO.getEmail());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("Email already exists!");
+        }
+
+        User user = UserMapper.INSTANCE.toEntity(userDTO);
+        User savedUser = userRepository.save(user);
+
+        return UserMapper.INSTANCE.toDto(savedUser);
     }
 
     public List<UserDTO> getAllUsers() {
