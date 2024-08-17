@@ -40,4 +40,11 @@ public class LocationShareController {
         List<UserLocationAccessDTO> accesses = locationService.getUserAccessesByLocation(locationId);
         return new ResponseEntity<>(accesses, HttpStatus.OK);
     }
+
+    @DeleteMapping("/{locationId}/users/{userId}")
+    public ResponseEntity<Void> removeUserAccessFromLocation(@PathVariable Long locationId, @PathVariable Long userId) {
+        boolean removed = locationService.removeUserAccessFromLocation(locationId, userId);
+        return removed ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }
